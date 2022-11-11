@@ -3,11 +3,35 @@ class BookingsController < ApplicationController
 
   # GET /bookings or /bookings.json
   def index
-    @bookings = Booking.all
+    # @bookings = Booking.all
+    begin
+      @response = Booking.get_bookings
+    rescue RestClient::Exception => exception
+      @error = exception.response
+    end
+  end
+
+  def local_records
+    @bookings = Booking.all.reverse
   end
 
   # GET /bookings/1 or /bookings/1.json
   def show
+    begin
+      @response = Booking.get_booking(params[:id])
+    rescue RestClient::Exception => exception
+      @error = exception.response
+    end
+  end
+
+  def cancel_booking
+    begin
+      @response = Booking.cancel_booking(params[:id])
+    rescue RestClient::Exception => exception
+      @error = exception.response
+    end
+
+    redirect_to root_path, notice: 'Booking was cancelled'
   end
 
   # GET /bookings/new
@@ -23,9 +47,19 @@ class BookingsController < ApplicationController
   def create
     @booking = Booking.new(booking_params)
 
+    begin
+      @response = Booking.create_booking(booking_options)
+      @booking.log = @response
+      @booking.picap_id = @response['_id']
+      notice = 'Booking was successfully created.'
+    rescue RestClient::Exception => exception
+      @booking.log = exception.response
+      alert = exception.response
+    end
+
     respond_to do |format|
       if @booking.save
-        format.html { redirect_to booking_url(@booking), notice: "Booking was successfully created." }
+        format.html { redirect_to root_path, notice: notice, alert: alert }
         format.json { render :show, status: :created, location: @booking }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +72,7 @@ class BookingsController < ApplicationController
   def update
     respond_to do |format|
       if @booking.update(booking_params)
-        format.html { redirect_to booking_url(@booking), notice: "Booking was successfully updated." }
+        format.html { redirect_to @booking, notice: "Booking was successfully updated." }
         format.json { render :show, status: :ok, location: @booking }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -65,6 +99,17 @@ class BookingsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def booking_params
-      params.fetch(:booking, {})
+      params.require(:booking).permit(:reference)
+    end
+
+    def booking_options
+      {
+        address_1: params[:address_1],
+        lat_1: params[:lat_1],
+        lon_1: params[:lon_1],
+        address_2: params[:address_2],
+        lat_2: params[:lat_2],
+        lon_2: params[:lon_2],
+      }
     end
 end
