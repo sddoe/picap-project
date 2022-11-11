@@ -19,7 +19,7 @@
           <% end %>
         </div>
         <div class="card-footer text-muted">
-          <%= booking_status_span_generator @response["status_cd"] %>
+          <%= booking_status_label(@response["status_cd"]) %>
         </div>
         <%= render_partial_if(@response["driver"], 'driver') %>
       </div>

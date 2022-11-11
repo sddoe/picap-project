@@ -40,7 +40,7 @@
           <td><%= booking["_id"] %></td>
           <td><%= booking["address"] %></td>
           <td><%= booking["stops"][0]["address"] %></td>
-          <td><%= booking_status_span_generator booking["status_cd"] %></td>
+          <td><%= booking_status_label(booking["status_cd"]) %></td>
           <td><%= link_to 'Show', booking_path(booking["_id"]) %> | <%= link_to 'Cancel', cancel_booking_path(booking["_id"]) %></td>
         </tr>
       <% end %>
