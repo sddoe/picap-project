@@ -4,3 +4,19 @@
   <h5 class="card-title">Color: <%= @response['served_vehicle']['color'] %></h5>
   <h5 class="card-title">GPS: lat <%= @response['served_vehicle']['loc_geojson']['coordinates'][1] %>, lng <%= @response['served_vehicle']['loc_geojson']['coordinates'][0] %></h5>
 </div>
+
+<div class="map-container">
+  <div 
+    id="driver-location"
+    data-latitude=<%= @response['served_vehicle']['loc_geojson']['coordinates'][1] %>
+    data-longitude=<%= @response['served_vehicle']['loc_geojson']['coordinates'][0] %>
+  >
+    <h2>Current driver location</h2>
+  </div>
+  <div id="map"></div>
+</div>
+<%= javascript_pack_tag 'map' %>
+<%= 
+    javascript_include_tag "https://maps.googleapis.com/maps/api/js?key=#{ENV["MAP_TOKEN"]}&callback=initMap",
+    defer: true
+%>
