@@ -1,8 +1,8 @@
 function initMap() {
   const coords = document.getElementById("driver-location");
   const location = {
-    lat: coords.getAttribute("data-latitude"),
-    lng: coords.getAttribute("data-longitude")
+    lat: parseFloat(coords.getAttribute("data-latitude")),
+    lng: parseFloat(coords.getAttribute("data-longitude"))
   };
   
   const map = new google.maps.Map(document.getElementById("map"), {
@@ -12,8 +12,8 @@ function initMap() {
 
   const marker = new google.maps.Marker({
     position: {
-      lat: coords.getAttribute("data-latitude"),
-      lng: coords.getAttribute("data-longitude")
+      lat: parseFloat(coords.getAttribute("data-latitude")),
+      lng: parseFloat(coords.getAttribute("data-longitude"))
     },
     map: map
   });
