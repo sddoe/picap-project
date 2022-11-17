@@ -1,9 +1,11 @@
 class Booking
   include Mongoid::Document
   include Mongoid::Timestamps
+
+  has_one :log
+
   field :picap_id, type: String
   field :reference, type: String
-  field :log, type: String
 
   def self.get_booking(id)
     response = RestClient.get("https://sandbox.picap.co/api/third/bookings/#{id}?t=#{ENV["PICAP_TOKEN"]}")

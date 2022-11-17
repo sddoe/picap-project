@@ -13,7 +13,9 @@
       <tr>
         <td><%= booking.picap_id ? 'SI' : 'NO' %></td>
         <td><%= booking.reference %></td>
-        <td><%= booking.log.truncate(150, omission: '... (continued)') %></td>
+        <td>
+          <%= Log.find_by(booking: booking.id).body %>
+        </td>
         <td><%= link_to 'Destroy', booking, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>

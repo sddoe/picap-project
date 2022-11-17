@@ -49,16 +49,21 @@ class BookingsController < ApplicationController
 
     begin
       @response = Booking.create_booking(booking_options)
-      @booking.log = @response
       @booking.picap_id = @response['_id']
       notice = 'Booking was successfully created.'
+      body_log = {}
+      @response.each do |field|
+        unless ["origin_geojson", "estimated_cost", "stops"].include? field[0]
+          body_log[field[0]] = field[1]
+        end
+      end
     rescue RestClient::Exception => exception
-      @booking.log = exception.response
       alert = exception.response
     end
 
     respond_to do |format|
       if @booking.save
+        Log.create_log(@booking.id, params['action'], body_log)
         format.html { redirect_to root_path, notice: notice, alert: alert }
         format.json { render :show, status: :created, location: @booking }
       else
